@@ -69,14 +69,16 @@ public class BinaryNumber implements Comparable<BinaryNumber>{
     }
 
     //=========================== Intro2CS 2022/3, ASSIGNMENT 4, TASK 3.2 ================================================
+    @Override
     public String toString() {
         // Do not remove or change the next two lines
         if (!isLegal()) // Do not change this line
             throw new RuntimeException("I am illegal.");// Do not change this line
 
         String ans = "";
-        for (Bit bit : this.bits)
-            ans += bit.toString();
+        Iterator<Bit> iter = this.bits.iterator();
+        while(iter.hasNext())
+            ans = ans.concat(iter.next().toString());
         return ans;
     }
 
@@ -100,10 +102,24 @@ public class BinaryNumber implements Comparable<BinaryNumber>{
 
     //=========================== Intro2CS 2022/3, ASSIGNMENT 4, TASK 3.4 ================================================
     public BinaryNumber add(BinaryNumber addMe) {
+
+        if(addMe.signum() == 0)
+            //in case the number is zero
+            return this;
+
+        boolean countCarry = true;
+
+        if(addMe.signum() == -1)
+            //in case the number is negative
+            countCarry = false;
+
+
         Bit A;
         Bit B ;
         Bit Cin = new Bit(0);
+
         compareSizes(addMe);
+
         BitList res = new BitList();
         BitList copyBits;
         copyBits = this.bits;
@@ -113,8 +129,14 @@ public class BinaryNumber implements Comparable<BinaryNumber>{
             res.addLast(Bit.fullAdderSum(A,B,Cin));
             Cin = Bit.fullAdderCarry(A,B,Cin);
         }
-        this.bits = copyBits;
         res.reduce();
+        if(Cin.toInt() == 1 & countCarry) {
+            //that means we have a carry
+            res.addFirst(Cin);
+            res.addFirst(new Bit(0));
+        }
+            this.bits = copyBits;
+
         return new BinaryNumber(res);
     }
 
@@ -126,29 +148,34 @@ public class BinaryNumber implements Comparable<BinaryNumber>{
         Bit temp;
         while(thisIter.hasNext()) {
             temp = thisIter.next().negate();
-            negBits.addLast(temp.negate());
+            negBits.addLast(temp);
         }
 
         //represent the number 1
         //and then we will combine
-        BitList adder = new BitList();
-        adder.addLast(new Bit(1));
-        adder.addLast(new Bit(0));
-        adder.padding(negBits.size());
-        BinaryNumber test =  new BinaryNumber(adder);
-        BinaryNumber res = new BinaryNumber(add(test));
+        BinaryNumber addOne = new BinaryNumber(1);
+
+        BinaryNumber res = (add(addOne));
 
         return res;
     }
 
     //=========================== Intro2CS 2022/3, ASSIGNMENT 4, TASK 3.6 ================================================
     public BinaryNumber subtract(BinaryNumber subtractMe) {
-        throw new UnsupportedOperationException("Delete this line and implement the method.");
+        //if(!subtractMe.isLegal())
+         //   throw new IllegalArgumentException("this is not a number");
+        subtractMe = subtractMe.negate();
+        return (add(subtractMe));
     }
 
     //=========================== Intro2CS 2022/3, ASSIGNMENT 4, TASK 3.7 ================================================
     public int signum() {
-        throw new UnsupportedOperationException("Delete this line and implement the method.");
+        if(this.toString().equals("0"))
+            //number is zero
+            return 0;
+        if(this.bits.getFirst().toInt() == 1)
+            return -1;
+        return 1;
     }
 
     //=========================== Intro2CS 2022/3, ASSIGNMENT 4, TASK 3.8 ================================================

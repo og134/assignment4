@@ -1,7 +1,7 @@
 
 import java.util.LinkedList;
 import java.util.Iterator;
-import java.util.Objects;
+
 
 public class BitList extends LinkedList<Bit> {
     private int numberOfOnes;
@@ -84,6 +84,7 @@ public class BitList extends LinkedList<Bit> {
 
     //=========================== Intro2CS 2022/3, ASSIGNMENT 4, TASK 2.4 ================================================
     public boolean isNumber() {
+        System.out.println(this.toString());
         if (this.size() > 1 && (this.numberOfOnes > 0 | this.getLast().toInt() == 0)) {
             if (this.numberOfOnes == 1 & this.getFirst().toInt() == 1)
                 return false;
@@ -96,7 +97,10 @@ public class BitList extends LinkedList<Bit> {
     public boolean isReduced() {
         Bit last;
         Bit prevLast;
-        if (Objects.equals(this.toString(), "<0>") | Objects.equals(this.toString(), "<01>") | Objects.equals(this.toString(), "<10>"))
+        if(!isNumber())
+            throw new IllegalArgumentException("dont try to insert null.");
+
+        if (this.toString().equals( "<0>") | this.toString().equals( "<01>") | this.toString().equals("<10>"))
             return true;
         if (this.size() > 2) {
             last = this.removeLast();
@@ -131,6 +135,8 @@ public class BitList extends LinkedList<Bit> {
 
     //=========================== Intro2CS 2022/3, ASSIGNMENT 4, TASK 2.6 ================================================
     public BitList complement() {
+        if(!isNumber())
+            throw new IllegalArgumentException("dont try to insert null.");
         BitList temp = new BitList();
         Iterator<Bit> iter = this.iterator();
         while (iter.hasNext())
@@ -140,6 +146,8 @@ public class BitList extends LinkedList<Bit> {
 
     //=========================== Intro2CS 2022/3, ASSIGNMENT 4, TASK 2.7 ================================================
     public Bit shiftRight() {
+        if(!isNumber())
+            throw new IllegalArgumentException("dont try to insert null.");
         if(this.size()> 0){
             Bit temp = this.removeFirst();
             return temp;
@@ -148,11 +156,15 @@ public class BitList extends LinkedList<Bit> {
     }
 
     public void shiftLeft() {
+        if(!isNumber())
+            throw new IllegalArgumentException("dont try to insert null.");
        this.addFirst(new Bit(0));
     }
 
     //=========================== Intro2CS 2022/3, ASSIGNMENT 4, TASK 2.8 ================================================
     public void padding(int newLength) {
+        if(!isNumber())
+            throw new IllegalArgumentException("dont try to insert null.");
         if(this.size() == 0)
             throw new IllegalArgumentException("the BitList is empty cannot pad");
         if(this.size() >= newLength)
@@ -162,7 +174,8 @@ public class BitList extends LinkedList<Bit> {
         //this is the lbs due to the flip of the list
 
         while(this.size() != newLength)
-            this.addLast(pad);
+            this.addLast(new Bit(pad.toInt()));
+        return;
     }
 
 
