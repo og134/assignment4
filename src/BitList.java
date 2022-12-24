@@ -79,13 +79,12 @@ public class BitList extends LinkedList<Bit> {
             throw new IllegalArgumentException("dont try to insert null.");
         Iterator<Bit> iter = other.iterator();
         while (iter.hasNext())
-            this.addLast(iter.next());
+            this.addFirst(iter.next());
     }
 
     //=========================== Intro2CS 2022/3, ASSIGNMENT 4, TASK 2.4 ================================================
     public boolean isNumber() {
-        System.out.println(this.toString());
-        if (this.size() > 1 && (this.numberOfOnes > 0 | this.getLast().toInt() == 0)) {
+        if (this.size() >= 1 && (this.numberOfOnes > 0 | this.getLast().toInt() == 0)) {
             if (this.numberOfOnes == 1 & this.getFirst().toInt() == 1)
                 return false;
             return true;
@@ -97,6 +96,7 @@ public class BitList extends LinkedList<Bit> {
     public boolean isReduced() {
         Bit last;
         Bit prevLast;
+        boolean ans = false;
         if(!isNumber())
             throw new IllegalArgumentException("dont try to insert null.");
 
@@ -105,23 +105,18 @@ public class BitList extends LinkedList<Bit> {
         if (this.size() > 2) {
             last = this.removeLast();
             prevLast = this.removeLast();
-            if(this.numberOfOnes == 2){
-                if ((last.toInt() == 1 & prevLast.toInt() == 1) | (last.toInt() == 1 & prevLast.toInt() == 1)) {
-                    this.addLast(prevLast);
-                    this.addLast(last);
-                    return true;
-                }
-            }
             if ((last.toInt() == 1 & prevLast.toInt() == 0) | (last.toInt() == 0 & prevLast.toInt() == 1)) {
-                this.addLast(prevLast);
-                this.addLast(last);
-                return true;
+                ans =  true;
+            }
+            if(this.numberOfOnes == 0){
+                if ((last.toInt() == 1) & (prevLast.toInt() == 1)) {
+                    ans = true;
+                }
             }
             this.addLast(prevLast);
             this.addLast(last);
         }
-
-        return false;
+        return ans;
     }
 
     public void reduce() {
