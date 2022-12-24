@@ -111,17 +111,19 @@ public class BinaryNumber implements Comparable<BinaryNumber>{
             return this;
         boolean carry = !(this.signum() == -1 | addMe.signum() == -1);
 
-        Bit A,B,sum;
+        Bit A,B;
+        Bit sum = new Bit(0);
         Bit Cin = new Bit(0);
         BinaryNumber ret =new BinaryNumber(0);
         ret.bits.removeFirst();
 
         compareSizes(addMe);
 
-
-
         BitList thisBits = new BitList(this.bits);
         BitList otherBits = new BitList(addMe.bits);
+
+        if(this.bits.isNumber())
+            this.bits.reduce();
 
         while (thisBits.size() > 0){
 
@@ -136,7 +138,13 @@ public class BinaryNumber implements Comparable<BinaryNumber>{
             ret.bits.addLast(Bit.ZERO);
             ret.bits.addLast(Bit.ONE);
         }
+        else if(sum.toInt() == 1 &!carry)
+            ret.bits.addLast(Bit.ONE);
 
+        //numbers are positive, we will add zero at the end
+        // if it's not nessery reduce will handle
+        else if(carry)
+            ret.bits.addLast(Bit.ZERO);
         ret.bits.reduce();
         return ret;
 
@@ -144,7 +152,7 @@ public class BinaryNumber implements Comparable<BinaryNumber>{
 
     //=========================== Intro2CS 2022/3, ASSIGNMENT 4, TASK 3.5 ================================================
     public BinaryNumber negate() {
-        this.bits.reduce();
+        //this.bits.reduce();
         BitList negBits = new BitList();
         Iterator<Bit> thisIter = this.bits.iterator();
         Bit temp;
@@ -166,7 +174,8 @@ public class BinaryNumber implements Comparable<BinaryNumber>{
         if(!subtractMe.isLegal())
             throw new IllegalArgumentException("this is not a number");
         subtractMe = subtractMe.negate();
-        return (add(subtractMe));
+
+        return add(subtractMe);
     }
 
     //=========================== Intro2CS 2022/3, ASSIGNMENT 4, TASK 3.7 ================================================
@@ -181,7 +190,12 @@ public class BinaryNumber implements Comparable<BinaryNumber>{
 
     //=========================== Intro2CS 2022/3, ASSIGNMENT 4, TASK 3.8 ================================================
     public int compareTo(BinaryNumber other) {
-        throw new UnsupportedOperationException("Delete this line and implement the method.");
+
+        if(this.toInt() > other.toInt())
+            return 1;
+        if(this.toInt() < other.toInt())
+            return -1;
+        return 0;
     }
 
     //=========================== Intro2CS 2022/3, ASSIGNMENT 4, TASK 3.9 ================================================
@@ -189,20 +203,76 @@ public class BinaryNumber implements Comparable<BinaryNumber>{
         // Do not remove or change the next two lines
         if (!isLegal()) // Do not change this line
             throw new RuntimeException("I am illegal.");// Do not change this line
-        //
-        throw new UnsupportedOperationException("Delete this line and implement the method.");
+
+        BitList thisBits = new BitList(this.bits);
+
+        boolean neg = thisBits.removeLast().toInt()==1;
+        int index =1;
+        int num = 0;
+        int temp;
+        while(thisBits.size() > 0){
+            temp = index * thisBits.removeFirst().toInt();
+            if(index> (Integer.MAX_VALUE/2)+1)
+                throw new RuntimeException("number is to big to be represented");
+            index *=2;
+            if(num > ((Integer.MAX_VALUE/2)+1 - temp))
+                throw new RuntimeException("number is to big to be represented");
+            num +=temp;
+        }
+        if(neg)
+            return -1*num;
+        return num;
     }
 
     //=========================== Intro2CS 2022/3, ASSIGNMENT 4, TASK 3.10 ================================================
     // Do not change this method
     public BinaryNumber multiply(BinaryNumber multiplyMe) {
-    	throw new UnsupportedOperationException("Delete this line and implement the method.");
+
+        boolean minus = (this.signum() * multiplyMe.signum()) > 0;
+
+        BitList thisBits = new BitList(this.bits);
+        BitList otherBits = new BitList(multiplyMe.bits);
+
+        if(this.signum() == 0 | multiplyMe.signum() == 0)
+            return new BinaryNumber(0);
+
+        if(this.signum() < 0)
+            thisBits.addLast(Bit.ZERO);
+
+        if(multiplyMe.signum() < 0)
+            otherBits.addLast(Bit.ZERO);
+
+        BinaryNumber otherBinaryNumber =  new BinaryNumber(otherBits);
+        BinaryNumber thisBinaryNumber =  new BinaryNumber(thisBits);
+
+        thisBinaryNumber.compareSizes(otherBinaryNumber);
+
+        return   thisBinaryNumber.multiplyPositive(otherBinaryNumber);
+
     }
 
     private BinaryNumber multiplyPositive(BinaryNumber multiplyMe) {
-        throw new UnsupportedOperationException("Delete this line and implement the method.");
+        BinaryNumber ans = new BinaryNumber()
     }
+    private BinaryNumber recMultiplyPositive(BinaryNumber ans,BinaryNumber target,int mults,int remain){
+        /*******************************
+         * ans - the answer
+         * target - the number we multiply
+         * mults - how many multiplys we have made so far
+         * remain - how many multiplays we still need to do
+         ******************************/
+        if(remain == 0)
+            return ans;
+        if(mults * 2 <= remain) {
+            return recMultiplyPositive(ans.multiplyBy2(),target,mults*2,remain-mults);
+        }
+        if(mults * 2 >= remain){
+            BinaryNumber temp = new BinaryNumber(0);
 
+        }
+
+
+    }
     //=========================== Intro2CS 2022/3, ASSIGNMENT 4, TASK 3.11 ================================================
     // Do not change this method
     public BinaryNumber divide(BinaryNumber divisor) {

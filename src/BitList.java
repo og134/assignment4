@@ -100,7 +100,7 @@ public class BitList extends LinkedList<Bit> {
         if(!isNumber())
             throw new IllegalArgumentException("dont try to insert null.");
 
-        if (this.toString().equals( "<0>") | this.toString().equals( "<01>") | this.toString().equals("<10>"))
+        if (this.toString().equals( "<0>") | this.toString().equals( "<01>") | this.toString().equals("<11>"))
             return true;
         if (this.size() > 2) {
             last = this.removeLast();
@@ -158,8 +158,6 @@ public class BitList extends LinkedList<Bit> {
 
     //=========================== Intro2CS 2022/3, ASSIGNMENT 4, TASK 2.8 ================================================
     public void padding(int newLength) {
-        if(!isNumber())
-            throw new IllegalArgumentException("dont try to insert null.");
         if(this.size() == 0)
             throw new IllegalArgumentException("the BitList is empty cannot pad");
         if(this.size() >= newLength)
