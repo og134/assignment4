@@ -1,9 +1,9 @@
 
 import java.util.Iterator;
 
-public class BinaryNumber implements Comparable<BinaryNumber>{
+public class BinaryNumber implements Comparable<BinaryNumber> {
     private static final BinaryNumber ZERO = new BinaryNumber(0);
-    private static final BinaryNumber ONE  = new BinaryNumber(1);
+    private static final BinaryNumber ONE = new BinaryNumber(1);
     private BitList bits;
 
     // Copy constructor
@@ -35,14 +35,16 @@ public class BinaryNumber implements Comparable<BinaryNumber>{
     //----------write your code BELOW this line only!!!---------------------------------------------------------
 
     //--------------------helpers--------------------------------------------------------------------------------
-    public BinaryNumber(BitList num){
+    public BinaryNumber(BitList num) {
         this.bits = new BitList(num);
     }
-    public void compareSizes(BinaryNumber B){
-       this.bits.padding(B.bits.size());
-       B.bits.padding(this.bits.size());
+
+    public void compareSizes(BinaryNumber B) {
+        this.bits.padding(B.bits.size());
+        B.bits.padding(this.bits.size());
     }
-    public void t(){
+
+    public void t() {
         this.bits.removeFirst();
         this.bits.addFirst(Bit.ONE);
         this.bits.addFirst(Bit.ONE);
@@ -55,18 +57,18 @@ public class BinaryNumber implements Comparable<BinaryNumber>{
     public static int toInt(char c) {
         return "0123456789".indexOf(c);
     }
+
     public BinaryNumber(char c) {
         this.bits = new BitList();
         String binary = Integer.toBinaryString(toInt(c));
-        for(int i = binary.length() - 1;i>=0;i--){
+        for (int i = binary.length() - 1; i >= 0; i--) {
             this.bits.addLast(new Bit(binary.charAt(i) - '0'));
         }
         //add zero if there is one at the beginning
         Bit LastBit = this.bits.getLast();
-        if(LastBit.toInt() == 1){
+        if (LastBit.toInt() == 1) {
             this.bits.addLast(new Bit(0));
-        }
-        else{
+        } else {
             this.bits.addLast(LastBit);
         }
     }
@@ -75,26 +77,26 @@ public class BinaryNumber implements Comparable<BinaryNumber>{
     @Override
     public String toString() {
         // Do not remove or change the next two lines
-       // if (!isLegal()) // Do not change this line
-         //   throw new RuntimeException("I am illegal.");// Do not change this line
+        // if (!isLegal()) // Do not change this line
+        //   throw new RuntimeException("I am illegal.");// Do not change this line
 
         String ans = "";
         Iterator<Bit> iter = this.bits.iterator();
-        while(iter.hasNext())
+        while (iter.hasNext())
             ans = ans.concat(iter.next().toString());
         return ans;
     }
 
     //=========================== Intro2CS 2022/3, ASSIGNMENT 4, TASK 3.3 ================================================
     public boolean equals(Object other) {
-        if(! (other instanceof BinaryNumber))
+        if (!(other instanceof BinaryNumber))
             return false;
 
-    	Iterator<Bit> ThisIter = this.bits.iterator();
-        Iterator<Bit> OtherIter =((BinaryNumber) other).bits.iterator();
+        Iterator<Bit> ThisIter = this.bits.iterator();
+        Iterator<Bit> OtherIter = ((BinaryNumber) other).bits.iterator();
 
-        if(ThisIter.hasNext() & OtherIter.hasNext()){
-            if(ThisIter.next().toInt() != OtherIter.next().toInt()){
+        if (ThisIter.hasNext() & OtherIter.hasNext()) {
+            if (ThisIter.next().toInt() != OtherIter.next().toInt()) {
                 return false;
             }
         }
@@ -104,17 +106,17 @@ public class BinaryNumber implements Comparable<BinaryNumber>{
     }
 
     //=========================== Intro2CS 2022/3, ASSIGNMENT 4, TASK 3.4 ================================================
-    public BinaryNumber  add(BinaryNumber addMe) {
+    public BinaryNumber add(BinaryNumber addMe) {
 
-        if(this.signum() == 0)
+        if (this.signum() == 0)
             //trying to add zero
             return this;
         boolean carry = !(this.signum() == -1 | addMe.signum() == -1);
 
-        Bit A,B;
+        Bit A, B;
         Bit sum = new Bit(0);
         Bit Cin = new Bit(0);
-        BinaryNumber ret =new BinaryNumber(0);
+        BinaryNumber ret = new BinaryNumber(0);
         ret.bits.removeFirst();
 
         compareSizes(addMe);
@@ -122,28 +124,27 @@ public class BinaryNumber implements Comparable<BinaryNumber>{
         BitList thisBits = new BitList(this.bits);
         BitList otherBits = new BitList(addMe.bits);
 
-        if(this.bits.isNumber())
+        if (this.bits.isNumber())
             this.bits.reduce();
 
-        while (thisBits.size() > 0){
+        while (thisBits.size() > 0) {
 
             A = thisBits.removeFirst();
             B = otherBits.removeFirst();
 
-            sum = Bit.fullAdderSum(A,B,Cin);
-            Cin = Bit.fullAdderCarry(A,B,Cin);
+            sum = Bit.fullAdderSum(A, B, Cin);
+            Cin = Bit.fullAdderCarry(A, B, Cin);
             ret.bits.addLast(sum);
         }
-        if(carry & Cin.toInt()==1) {
+        if (carry & Cin.toInt() == 1) {
             ret.bits.addLast(Bit.ZERO);
             ret.bits.addLast(Bit.ONE);
-        }
-        else if(sum.toInt() == 1 &!carry)
+        } else if (sum.toInt() == 1 & !carry)
             ret.bits.addLast(Bit.ONE);
 
-        //numbers are positive, we will add zero at the end
-        // if it's not nessery reduce will handle
-        else if(carry)
+            //numbers are positive, we will add zero at the end
+            // if it's not nessery reduce will handle
+        else if (carry)
             ret.bits.addLast(Bit.ZERO);
         ret.bits.reduce();
         return ret;
@@ -156,7 +157,7 @@ public class BinaryNumber implements Comparable<BinaryNumber>{
         BitList negBits = new BitList();
         Iterator<Bit> thisIter = this.bits.iterator();
         Bit temp;
-        while(thisIter.hasNext()) {
+        while (thisIter.hasNext()) {
             temp = thisIter.next().negate();
             negBits.addFirst(temp);
         }
@@ -171,7 +172,7 @@ public class BinaryNumber implements Comparable<BinaryNumber>{
 
     //=========================== Intro2CS 2022/3, ASSIGNMENT 4, TASK 3.6 ================================================
     public BinaryNumber subtract(BinaryNumber subtractMe) {
-        if(!subtractMe.isLegal())
+        if (!subtractMe.isLegal())
             throw new IllegalArgumentException("this is not a number");
         subtractMe = subtractMe.negate();
 
@@ -180,10 +181,10 @@ public class BinaryNumber implements Comparable<BinaryNumber>{
 
     //=========================== Intro2CS 2022/3, ASSIGNMENT 4, TASK 3.7 ================================================
     public int signum() {
-        if(this.toString().equals("0"))
+        if (this.toString().equals("0"))
             //number is zero
             return 0;
-        if(this.bits.getFirst().toInt() == 1)
+        if (this.bits.getFirst().toInt() == 1)
             return -1;
         return 1;
     }
@@ -191,9 +192,9 @@ public class BinaryNumber implements Comparable<BinaryNumber>{
     //=========================== Intro2CS 2022/3, ASSIGNMENT 4, TASK 3.8 ================================================
     public int compareTo(BinaryNumber other) {
 
-        if(this.toInt() > other.toInt())
+        if (this.toInt() > other.toInt())
             return 1;
-        if(this.toInt() < other.toInt())
+        if (this.toInt() < other.toInt())
             return -1;
         return 0;
     }
@@ -206,21 +207,21 @@ public class BinaryNumber implements Comparable<BinaryNumber>{
 
         BitList thisBits = new BitList(this.bits);
 
-        boolean neg = thisBits.removeLast().toInt()==1;
-        int index =1;
+        boolean neg = thisBits.removeLast().toInt() == 1;
+        int index = 1;
         int num = 0;
         int temp;
-        while(thisBits.size() > 0){
+        while (thisBits.size() > 0) {
             temp = index * thisBits.removeFirst().toInt();
-            if(index> (Integer.MAX_VALUE/2)+1)
+            if (index > (Integer.MAX_VALUE / 2) + 1)
                 throw new RuntimeException("number is to big to be represented");
-            index *=2;
-            if(num > ((Integer.MAX_VALUE/2)+1 - temp))
+            index *= 2;
+            if (num > ((Integer.MAX_VALUE / 2) + 1 - temp))
                 throw new RuntimeException("number is to big to be represented");
-            num +=temp;
+            num += temp;
         }
-        if(neg)
-            return -1*num;
+        if (neg)
+            return -1 * num;
         return num;
     }
 
@@ -228,59 +229,67 @@ public class BinaryNumber implements Comparable<BinaryNumber>{
     // Do not change this method
     public BinaryNumber multiply(BinaryNumber multiplyMe) {
 
-        boolean minus = (this.signum() * multiplyMe.signum()) > 0;
+        if (this.signum() == 0 | multiplyMe.signum() == 0) {
+            return new BinaryNumber(0);
+        }
+
+        boolean minus = (this.signum() * multiplyMe.signum()) < 0;
 
         BitList thisBits = new BitList(this.bits);
         BitList otherBits = new BitList(multiplyMe.bits);
 
-        if(this.signum() == 0 | multiplyMe.signum() == 0)
-            return new BinaryNumber(0);
+        BinaryNumber otherBinaryNumber = new BinaryNumber(otherBits);
+        BinaryNumber thisBinaryNumber = new BinaryNumber(thisBits);
 
-        if(this.signum() < 0)
-            thisBits.addLast(Bit.ZERO);
+        if (otherBinaryNumber.signum() < 0)
+            otherBinaryNumber = otherBinaryNumber.negate();
 
-        if(multiplyMe.signum() < 0)
-            otherBits.addLast(Bit.ZERO);
+        if (thisBinaryNumber.signum() < 0)
+            thisBinaryNumber = thisBinaryNumber.negate();
 
-        BinaryNumber otherBinaryNumber =  new BinaryNumber(otherBits);
-        BinaryNumber thisBinaryNumber =  new BinaryNumber(thisBits);
 
-        thisBinaryNumber.compareSizes(otherBinaryNumber);
+        BinaryNumber ans = thisBinaryNumber.multiplyPositive(otherBinaryNumber);
+        if(minus)
+            ans.bits.addLast(Bit.ONE);
 
-        return   thisBinaryNumber.multiplyPositive(otherBinaryNumber);
+        return ans;
 
     }
 
     private BinaryNumber multiplyPositive(BinaryNumber multiplyMe) {
-        BinaryNumber ans = new BinaryNumber()
+        int mult = multiplyMe.toInt();
+        this.compareSizes(multiplyMe);
+        return this.recMultiplyPositive (new BinaryNumber(this), new BinaryNumber(this), 1, mult);
     }
-    private BinaryNumber recMultiplyPositive(BinaryNumber ans,BinaryNumber target,int mults,int remain){
+
+    private BinaryNumber recMultiplyPositive(BinaryNumber ans, BinaryNumber target, int mults, int total) {
         /*******************************
          * ans - the answer
          * target - the number we multiply
          * mults - how many multiplys we have made so far
          * remain - how many multiplays we still need to do
          ******************************/
-        if(remain == 0)
+        if (total == mults)
             return ans;
-        if(mults * 2 <= remain) {
-            return recMultiplyPositive(ans.multiplyBy2(),target,mults*2,remain-mults);
+        if (mults*2  <= total)
+            return recMultiplyPositive(ans.multiplyBy2(), target, mults * 2, total);
+
+        if (mults * 2 > total) {
+            BinaryNumber temp = new BinaryNumber(1);
+            temp = target.multiplyBy2();
+            return ans.add(recMultiplyPositive(temp, target, mults + 1, total));
         }
-        if(mults * 2 >= remain){
-            BinaryNumber temp = new BinaryNumber(0);
-
-        }
-
-
+        return ans;
     }
+
     //=========================== Intro2CS 2022/3, ASSIGNMENT 4, TASK 3.11 ================================================
     // Do not change this method
     public BinaryNumber divide(BinaryNumber divisor) {
-    	// Do not remove or change the next two lines
-    	if (divisor.equals(ZERO)) // Do not change this line
+        // Do not remove or change the next two lines
+        if (divisor.equals(ZERO)) // Do not change this line
             throw new RuntimeException("Cannot divide by zero."); // Do not change this line
-    	//
-    	throw new UnsupportedOperationException("Delete this line and implement the method.");
+        //
+        throw new UnsupportedOperationException("Delete this line and implement the method.");
     }
 
     private BinaryNumber dividePositive(BinaryNumber divisor) {
@@ -325,7 +334,7 @@ public class BinaryNumber implements Comparable<BinaryNumber>{
         }
         return output;
     }
- 
+
 }
 
 
