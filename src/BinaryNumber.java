@@ -276,8 +276,7 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
 
         if (mults * 2 > total) {
             BinaryNumber temp = new BinaryNumber(1);
-            temp = target.multiplyBy2();
-            return ans.add(recMultiplyPositive(temp, target, mults + 1, total));
+            return recMultiplyPositive(ans.add(target), target, mults + 1, total);
         }
         return ans;
     }
