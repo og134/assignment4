@@ -50,13 +50,14 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
         this.bits.addFirst(Bit.ONE);
         this.bits.addLast(Bit.ONE);
     }
+    public static int toInt(char c) {
+        return "0123456789".indexOf(c);
+    }
 
     //-------------------end of helpers------------------------------------------------------------------------
 
     //=========================== Intro2CS 2022/3, ASSIGNMENT 4, TASK 3.1 ================================================
-    public static int toInt(char c) {
-        return "0123456789".indexOf(c);
-    }
+
 
     public BinaryNumber(char c) {
         this.bits = new BitList();
@@ -108,7 +109,7 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
     //=========================== Intro2CS 2022/3, ASSIGNMENT 4, TASK 3.4 ================================================
     public BinaryNumber add(BinaryNumber addMe) {
 
-        if (this.signum() == 0)
+        if (addMe.signum() == 0)
             //trying to add zero
             return this;
         boolean carry = !(this.signum() == -1 | addMe.signum() == -1);
@@ -288,16 +289,60 @@ public class BinaryNumber implements Comparable<BinaryNumber> {
         if (divisor.equals(ZERO)) // Do not change this line
             throw new RuntimeException("Cannot divide by zero."); // Do not change this line
         //
-        throw new UnsupportedOperationException("Delete this line and implement the method.");
+        if (this.signum() == 0 | divisor.signum() == 0) {
+            return new BinaryNumber(0);
+        }
+
+        boolean minus = (this.signum() * divisor.signum()) < 0;
+
+        BitList thisBits = new BitList(this.bits);
+        BitList otherBits = new BitList(divisor.bits);
+
+        BinaryNumber otherBinaryNumber = new BinaryNumber(otherBits);
+        BinaryNumber thisBinaryNumber = new BinaryNumber(thisBits);
+
+        if (otherBinaryNumber.signum() < 0)
+            otherBinaryNumber = otherBinaryNumber.negate();
+
+        if (thisBinaryNumber.signum() < 0)
+            thisBinaryNumber = thisBinaryNumber.negate();
+
+
+        BinaryNumber ans = thisBinaryNumber.dividePositive(otherBinaryNumber);
+        if(minus)
+            ans.bits.addLast(Bit.ONE);
+
+        return ans;
+
     }
 
     private BinaryNumber dividePositive(BinaryNumber divisor) {
-        throw new UnsupportedOperationException("Delete this line and implement the method.");
+        BinaryNumber temp = new BinaryNumber(0);
+        BinaryNumber div = new BinaryNumber(0);
+
+        while(this.compareTo(temp.add(divisor)) >=0){
+            temp = temp.add(divisor);
+            div = div.add(new BinaryNumber(1));
+        }
+        return div;
     }
 
     //=========================== Intro2CS 2022/3, ASSIGNMENT 4, TASK 3.12 ================================================
-    public BinaryNumber(String s) {
-        throw new UnsupportedOperationException("Delete this line and implement the method.");
+    public BinaryNumber (String s) {
+        boolean neg = false;
+        if(s.charAt(0) == '-')
+            neg = true;
+
+        BitList ans = new BitList();
+        BinaryNumber divide =  new BinaryNumber(1);
+        divide =divide.add(new BinaryNumber(1));
+
+
+        BinaryNumber ret = new BinaryNumber(ans);
+        if(neg)
+            ret = ret.negate();
+
+        this.bits = new BitList(ans);
     }
 
     //=========================== Intro2CS 2022/3, ASSIGNMENT 4, TASK 3.13 ================================================
